@@ -1,42 +1,1527 @@
 <!DOCTYPE html>
-<html lang= "en">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=badge">
-    <meta name="'veiwport" content="IE=edge">
-    <title> Complete Responsive Personal Portfolio Website</title>
-    <link rel="stylesheet" href="css/style.css">
-    <!--box icons-->
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-</head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KAVISH.EXE — Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #00ff41;
+    --cyan: #00f5ff;
+    --pink: #ff006e;
+    --yellow: #ffe600;
+    --orange: #ff6b00;
+    --purple: #bf00ff;
+    --bg: #020b05;
+    --bg2: #050f08;
+    --panel: #061a0c;
+    --border: #00ff4122;
+    --text: #c8ffd4;
+    --dim: #4a8f5a;
+    --glow-green: 0 0 10px #00ff41, 0 0 20px #00ff4188, 0 0 40px #00ff4133;
+    --glow-cyan: 0 0 10px #00f5ff, 0 0 20px #00f5ff88;
+    --glow-pink: 0 0 10px #ff006e, 0 0 20px #ff006e88;
+    --glow-yellow: 0 0 10px #ffe600, 0 0 20px #ffe60088;
+  }
 
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ── CUSTOM CURSOR ── */
+  #cursor {
+    position: fixed; width: 16px; height: 16px;
+    border: 2px solid var(--green);
+    transform: translate(-50%,-50%);
+    pointer-events: none; z-index: 9999;
+    transition: transform .1s, border-color .2s;
+    box-shadow: var(--glow-green);
+  }
+  #cursor-trail {
+    position: fixed; width: 6px; height: 6px;
+    background: var(--green); border-radius: 50%;
+    transform: translate(-50%,-50%);
+    pointer-events: none; z-index: 9998;
+    opacity: 0.6; transition: transform .25s, left .08s, top .08s;
+  }
+
+  /* ── SCANLINES OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 9990; pointer-events: none;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.18) 2px,
+      rgba(0,0,0,0.18) 4px
+    );
+    animation: scanroll 8s linear infinite;
+  }
+  @keyframes scanroll {
+    from { background-position: 0 0; }
+    to { background-position: 0 100px; }
+  }
+
+  /* ── NOISE TEXTURE ── */
+  body::after {
+    content: '';
+    position: fixed; inset: 0; z-index: 9989; pointer-events: none;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--green); box-shadow: var(--glow-green); }
+
+  /* ── NAVBAR ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    background: rgba(2,11,5,0.92);
+    border-bottom: 1px solid var(--green);
+    backdrop-filter: blur(8px);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 56px;
+    box-shadow: 0 2px 30px #00ff4122;
+  }
+  .nav-logo {
+    font-family: 'Press Start 2P', monospace;
+    font-size: .65rem; color: var(--green);
+    text-shadow: var(--glow-green);
+    letter-spacing: 2px;
+  }
+  .nav-logo span { color: var(--cyan); }
+  .nav-links { display: flex; gap: 1.6rem; list-style: none; }
+  .nav-links a {
+    font-family: 'Press Start 2P', monospace;
+    font-size: .45rem; color: var(--dim);
+    text-decoration: none; letter-spacing: 1px;
+    transition: color .2s, text-shadow .2s;
+  }
+  .nav-links a:hover { color: var(--green); text-shadow: var(--glow-green); }
+  .nav-status {
+    font-size: .7rem; color: var(--green);
+    display: flex; align-items: center; gap: .5rem;
+  }
+  .blink-dot {
+    width: 8px; height: 8px; background: var(--green);
+    border-radius: 50%; animation: blink 1s infinite;
+    box-shadow: var(--glow-green);
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 80px 2rem 2rem;
+    position: relative; overflow: hidden;
+  }
+  .hero-grid {
+    position: absolute; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+    animation: gridpulse 4s ease-in-out infinite;
+  }
+  @keyframes gridpulse { 0%,100%{opacity:.6} 50%{opacity:1} }
+
+  /* Pixelated character sprite area */
+  .hero-sprite-area {
+    position: relative; z-index: 2; margin-bottom: 2rem;
+    display: flex; align-items: center; gap: 3rem;
+  }
+  .pixel-avatar {
+    width: 120px; height: 120px; position: relative;
+    image-rendering: pixelated;
+    animation: float 3s ease-in-out infinite;
+  }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+
+  .hero-text { position: relative; z-index: 2; text-align: center; }
+  .hero-tag {
+    font-family: 'Press Start 2P', monospace;
+    font-size: .5rem; color: var(--cyan);
+    letter-spacing: 4px; margin-bottom: 1rem;
+    text-shadow: var(--glow-cyan);
+  }
+  .hero-name {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(2.5rem, 7vw, 5rem);
+    font-weight: 900; color: var(--green);
+    text-shadow: var(--glow-green);
+    letter-spacing: 4px; line-height: 1;
+    margin-bottom: .5rem;
+    animation: nameglitch 6s infinite;
+  }
+  @keyframes nameglitch {
+    0%,92%,100% { text-shadow: var(--glow-green); transform: none; }
+    93% { text-shadow: 3px 0 var(--pink), -3px 0 var(--cyan); transform: translateX(2px); }
+    94% { text-shadow: -3px 0 var(--pink), 3px 0 var(--cyan); transform: translateX(-2px); }
+    95% { text-shadow: var(--glow-green); transform: none; }
+    96% { text-shadow: 2px 0 var(--yellow), -2px 0 var(--purple); transform: translateX(1px); }
+    97% { text-shadow: var(--glow-green); transform: none; }
+  }
+  .hero-subtitle {
+    font-family: 'Press Start 2P', monospace;
+    font-size: .55rem; color: var(--yellow);
+    text-shadow: var(--glow-yellow);
+    letter-spacing: 3px; margin-bottom: 2rem;
+  }
+  .hero-typewriter {
+    font-size: .95rem; color: var(--text); min-height: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+  .hero-typewriter::after {
+    content: '█'; animation: blink 1s infinite; color: var(--green);
+  }
+  .hero-badges {
+    display: flex; flex-wrap: wrap; gap: .7rem;
+    justify-content: center; margin-bottom: 2.5rem;
+  }
+  .badge {
+    font-family: 'Press Start 2P', monospace;
+    font-size: .4rem; padding: .4rem .8rem;
+    border: 1px solid currentColor;
+    letter-spacing: 1px;
+    transition: all .2s;
+  }
+  .badge:hover { transform: scale(1.05); filter: brightness(1.3); }
+  .badge.cyber { color: var(--pink); border-color: var(--pink); box-shadow: 0 0 8px #ff006e44; }
+  .badge.cloud { color: var(--cyan); border-color: var(--cyan); box-shadow: 0 0 8px #00f5ff44; }
+  .badge.data  { color: var(--yellow); border-color: var(--yellow); box-shadow: 0 0 8px #ffe60044; }
+  .badge.dev   { color: var(--green); border-color: var(--green); box-shadow: 0 0 8px #00ff4144; }
+  .badge.it    { color: var(--purple); border-color: var(--purple); box-shadow: 0 0 8px #bf00ff44; }
+
+  .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+  .btn {
+    font-family: 'Press Start 2P', monospace;
+    font-size: .45rem; padding: .8rem 1.4rem;
+    text-decoration: none; letter-spacing: 2px;
+    border: 2px solid; cursor: none;
+    transition: all .2s; position: relative; overflow: hidden;
+    display: inline-flex; align-items: center; gap: .5rem;
+  }
+  .btn::before {
+    content: ''; position: absolute; inset: 0;
+    transform: translateX(-110%); transition: transform .3s;
+    z-index: -1;
+  }
+  .btn:hover::before { transform: translateX(0); }
+  .btn-primary { color: var(--bg); background: var(--green); border-color: var(--green); box-shadow: var(--glow-green); }
+  .btn-primary:hover { background: transparent; color: var(--green); }
+  .btn-primary::before { background: var(--green); }
+  .btn-secondary { color: var(--cyan); border-color: var(--cyan); box-shadow: var(--glow-cyan); }
+  .btn-secondary:hover { background: var(--cyan); color: var(--bg); }
+  .btn-secondary::before { background: var(--cyan); }
+
+  .scroll-hint {
+    position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+    font-family: 'Press Start 2P', monospace; font-size: .4rem;
+    color: var(--dim); animation: bounce 2s infinite;
+    z-index: 2;
+  }
+  @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
+
+  /* ── SECTION SHARED ── */
+  section { padding: 6rem 2rem; max-width: 1200px; margin: 0 auto; }
+  .section-header {
+    display: flex; align-items: center; gap: 1rem; margin-bottom: 3rem;
+  }
+  .section-num {
+    font-family: 'Press Start 2P', monospace;
+    font-size: .55rem; color: var(--pink);
+    text-shadow: var(--glow-pink);
+  }
+  .section-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    font-weight: 900; color: var(--green);
+    text-shadow: var(--glow-green);
+    letter-spacing: 3px;
+  }
+  .section-line {
+    flex: 1; height: 1px; background: linear-gradient(90deg, var(--green), transparent);
+  }
+
+  /* ── TERMINAL ABOUT ── */
+  .terminal-box {
+    background: var(--panel);
+    border: 1px solid var(--green);
+    box-shadow: var(--glow-green), inset 0 0 30px #00ff410a;
+    padding: 0; overflow: hidden;
+  }
+  .terminal-bar {
+    background: #0a2010;
+    border-bottom: 1px solid var(--green);
+    padding: .5rem 1rem;
+    display: flex; align-items: center; gap: .5rem;
+  }
+  .t-btn { width: 10px; height: 10px; border-radius: 50%; }
+  .t-close { background: var(--pink); box-shadow: 0 0 6px var(--pink); }
+  .t-min   { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
+  .t-max   { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .t-title { font-family: 'Press Start 2P', monospace; font-size: .4rem; color: var(--dim); margin-left: .5rem; }
+  .terminal-body { padding: 1.5rem 2rem; }
+  .t-line { margin-bottom: .6rem; line-height: 1.6; font-size: .9rem; }
+  .t-prompt { color: var(--green); }
+  .t-cmd { color: var(--cyan); }
+  .t-out { color: var(--text); padding-left: 1rem; }
+  .t-key { color: var(--yellow); }
+  .t-val { color: var(--text); }
+  .t-comment { color: var(--dim); }
+  .about-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem;
+  }
+  .stat-box {
+    border: 1px solid var(--border);
+    padding: 1.2rem; text-align: center;
+    background: #061a0c; position: relative; overflow: hidden;
+    transition: border-color .3s, box-shadow .3s;
+  }
+  .stat-box:hover { border-color: var(--cyan); box-shadow: var(--glow-cyan); }
+  .stat-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 2rem; font-weight: 900; color: var(--cyan);
+    text-shadow: var(--glow-cyan);
+  }
+  .stat-label { font-size: .7rem; color: var(--dim); margin-top: .3rem; }
+
+  /* ── SKILLS ── */
+  .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+  .skill-category {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    transition: border-color .3s, box-shadow .3s;
+    position: relative; overflow: hidden;
+  }
+  .skill-category::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+  }
+  .skill-category.cat-cyber::before { background: var(--pink); box-shadow: 0 0 10px var(--pink); }
+  .skill-category.cat-cloud::before { background: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
+  .skill-category.cat-data::before  { background: var(--yellow); box-shadow: 0 0 10px var(--yellow); }
+  .skill-category.cat-dev::before   { background: var(--green); box-shadow: 0 0 10px var(--green); }
+  .skill-category.cat-tools::before { background: var(--purple); box-shadow: 0 0 10px var(--purple); }
+  .skill-category.cat-it::before    { background: var(--orange); box-shadow: 0 0 10px var(--orange); }
+  .skill-category:hover { border-color: #00ff4144; }
+  .skill-cat-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: .45rem; margin-bottom: 1rem; letter-spacing: 1px;
+  }
+  .cat-cyber .skill-cat-title { color: var(--pink); text-shadow: var(--glow-pink); }
+  .cat-cloud .skill-cat-title { color: var(--cyan); text-shadow: var(--glow-cyan); }
+  .cat-data  .skill-cat-title { color: var(--yellow); text-shadow: var(--glow-yellow); }
+  .cat-dev   .skill-cat-title { color: var(--green); text-shadow: var(--glow-green); }
+  .cat-tools .skill-cat-title { color: var(--purple); text-shadow: 0 0 10px var(--purple); }
+  .cat-it    .skill-cat-title { color: var(--orange); text-shadow: 0 0 10px var(--orange); }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: .4rem; }
+  .skill-tag {
+    font-size: .72rem; padding: .2rem .5rem;
+    border: 1px solid #00ff4120; color: var(--dim);
+    background: #020b05;
+    transition: all .2s;
+  }
+  .skill-tag:hover { border-color: var(--green); color: var(--green); box-shadow: 0 0 6px #00ff4166; }
+
+  /* ── SKILL BARS ── */
+  .skill-bars { margin-top: 3rem; }
+  .skill-bar-row { margin-bottom: 1rem; }
+  .skill-bar-label {
+    display: flex; justify-content: space-between;
+    font-size: .8rem; color: var(--text); margin-bottom: .3rem;
+  }
+  .skill-bar-label span:last-child { color: var(--green); }
+  .skill-bar-track {
+    height: 6px; background: #0d2014; border: 1px solid #00ff4120; position: relative;
+  }
+  .skill-bar-fill {
+    height: 100%; position: relative;
+    animation: fillbar 1.5s ease-out forwards;
+    transform-origin: left;
+  }
+  @keyframes fillbar { from { width: 0; } }
+  .skill-bar-fill::after {
+    content: ''; position: absolute; right: 0; top: 50%;
+    width: 8px; height: 8px; transform: translateY(-50%);
+    border-radius: 50%;
+  }
+
+  /* ── PROJECTS ── */
+  .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.5rem; }
+  .project-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 0; overflow: hidden;
+    transition: transform .3s, border-color .3s, box-shadow .3s;
+    position: relative;
+  }
+  .project-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--green);
+    box-shadow: var(--glow-green);
+  }
+  .project-card-header {
+    padding: .6rem 1rem;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .project-window-btns { display: flex; gap: .4rem; }
+  .project-window-btns span {
+    width: 8px; height: 8px; border-radius: 50%; display: block;
+  }
+  .pw-r { background: var(--pink); }
+  .pw-y { background: var(--yellow); }
+  .pw-g { background: var(--green); }
+  .project-type-tag {
+    font-family: 'Press Start 2P', monospace;
+    font-size: .35rem; padding: .2rem .5rem;
+    border: 1px solid currentColor;
+  }
+  .project-body { padding: 1.5rem; }
+  .project-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 1rem; font-weight: 700; color: var(--green);
+    text-shadow: var(--glow-green); margin-bottom: .5rem;
+  }
+  .project-subtitle { font-size: .7rem; color: var(--cyan); margin-bottom: 1rem; }
+  .project-desc { font-size: .8rem; color: var(--text); line-height: 1.7; margin-bottom: 1rem; }
+  .project-features { list-style: none; margin-bottom: 1.2rem; }
+  .project-features li {
+    font-size: .75rem; color: var(--dim); padding: .2rem 0;
+    padding-left: 1rem; position: relative; line-height: 1.6;
+  }
+  .project-features li::before { content: '▸'; position: absolute; left: 0; color: var(--green); }
+  .project-stack { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1.2rem; }
+  .stack-tag {
+    font-family: 'Press Start 2P', monospace;
+    font-size: .32rem; padding: .25rem .5rem;
+    border: 1px solid; letter-spacing: .5px;
+  }
+  .project-links { display: flex; gap: .8rem; }
+  .proj-link {
+    font-family: 'Press Start 2P', monospace;
+    font-size: .38rem; color: var(--green);
+    text-decoration: none; padding: .4rem .7rem;
+    border: 1px solid var(--green);
+    transition: all .2s; display: flex; align-items: center; gap: .4rem;
+  }
+  .proj-link:hover { background: var(--green); color: var(--bg); box-shadow: var(--glow-green); }
+
+  /* ── EXPERIENCE ── */
+  .exp-timeline { position: relative; padding-left: 2rem; }
+  .exp-timeline::before {
+    content: ''; position: absolute; left: .5rem; top: 0; bottom: 0;
+    width: 1px; background: linear-gradient(180deg, var(--green), var(--cyan), transparent);
+  }
+  .exp-item { position: relative; margin-bottom: 2.5rem; }
+  .exp-dot {
+    position: absolute; left: -1.65rem; top: .4rem;
+    width: 12px; height: 12px;
+    border: 2px solid var(--green); background: var(--bg);
+    animation: dotpulse 2s infinite;
+  }
+  @keyframes dotpulse { 0%,100%{box-shadow:0 0 0 0 #00ff4155} 50%{box-shadow:0 0 0 6px #00ff4100} }
+  .exp-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    transition: border-color .3s;
+  }
+  .exp-card:hover { border-color: var(--cyan); box-shadow: var(--glow-cyan); }
+  .exp-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: .5rem; margin-bottom: .5rem; }
+  .exp-role { font-family: 'Orbitron', monospace; font-size: 1rem; color: var(--green); font-weight: 700; }
+  .exp-date {
+    font-family: 'Press Start 2P', monospace;
+    font-size: .38rem; color: var(--pink); padding: .3rem .6rem;
+    border: 1px solid var(--pink); box-shadow: 0 0 8px #ff006e33;
+  }
+  .exp-company { font-size: .85rem; color: var(--cyan); margin-bottom: 1rem; }
+  .exp-bullets { list-style: none; }
+  .exp-bullets li {
+    font-size: .8rem; color: var(--text); padding: .3rem 0;
+    padding-left: 1.2rem; position: relative; line-height: 1.6;
+  }
+  .exp-bullets li::before { content: '>'; position: absolute; left: 0; color: var(--green); }
+
+  /* ── CERTS ── */
+  .certs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.2rem; }
+  .cert-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 1.5rem; text-align: center;
+    transition: all .3s; position: relative; overflow: hidden;
+  }
+  .cert-card::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, transparent 50%, #00ff4106);
+    opacity: 0; transition: opacity .3s;
+  }
+  .cert-card:hover::before { opacity: 1; }
+  .cert-card:hover { border-color: var(--yellow); box-shadow: var(--glow-yellow); }
+  .cert-icon { font-size: 2rem; margin-bottom: .8rem; }
+  .cert-name { font-family: 'Orbitron', monospace; font-size: .85rem; color: var(--yellow); font-weight: 700; margin-bottom: .4rem; }
+  .cert-org { font-size: .75rem; color: var(--dim); }
+  .cert-badge-text {
+    display: inline-block; margin-top: .8rem;
+    font-family: 'Press Start 2P', monospace;
+    font-size: .35rem; padding: .3rem .6rem;
+    border: 1px solid var(--yellow); color: var(--yellow);
+  }
+
+  /* ── LEADERSHIP ── */
+  .leadership-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.2rem; }
+  .leader-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    transition: all .3s;
+  }
+  .leader-card:hover { border-color: var(--purple); box-shadow: 0 0 20px #bf00ff44; }
+  .leader-icon { font-size: 1.5rem; margin-bottom: .5rem; }
+  .leader-role { font-family: 'Orbitron', monospace; font-size: .9rem; color: var(--purple); font-weight: 700; margin-bottom: .2rem; }
+  .leader-org { font-size: .8rem; color: var(--cyan); margin-bottom: .8rem; }
+  .leader-desc { font-size: .78rem; color: var(--dim); line-height: 1.6; }
+
+  /* ── CONTACT ── */
+  #contact { text-align: center; padding-bottom: 4rem; }
+  .contact-inner { max-width: 700px; margin: 0 auto; }
+  .contact-tagline {
+    font-family: 'Press Start 2P', monospace;
+    font-size: .5rem; color: var(--dim); margin-bottom: 2rem; line-height: 2;
+  }
+  .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin: 2rem 0; }
+  .contact-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 1.2rem; text-align: center;
+    text-decoration: none; transition: all .3s;
+  }
+  .contact-card:hover { border-color: var(--green); box-shadow: var(--glow-green); transform: translateY(-4px); }
+  .contact-card-icon { font-size: 1.5rem; margin-bottom: .5rem; }
+  .contact-card-label { font-family: 'Press Start 2P', monospace; font-size: .4rem; color: var(--dim); margin-bottom: .3rem; }
+  .contact-card-val { font-size: .8rem; color: var(--green); word-break: break-all; }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    text-align: center; padding: 2rem;
+    font-family: 'Press Start 2P', monospace;
+    font-size: .4rem; color: var(--dim);
+    background: var(--bg2);
+  }
+  footer span { color: var(--green); }
+
+  /* ── PIXEL ART SVG CHARACTER ── */
+  .pixel-char { image-rendering: pixelated; }
+
+  /* ── FLOATING PARTICLES ── */
+  #particles { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+  /* ── MINI ARCADE GAME ── */
+  #game-section {
+    padding: 4rem 2rem; max-width: 1200px; margin: 0 auto;
+  }
+  .game-wrapper {
+    background: var(--panel);
+    border: 2px solid var(--green);
+    box-shadow: var(--glow-green), inset 0 0 40px #00ff4108;
+    padding: 2rem; text-align: center;
+  }
+  .game-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: .6rem; color: var(--green);
+    text-shadow: var(--glow-green);
+    margin-bottom: .5rem; letter-spacing: 3px;
+  }
+  .game-sub { font-size: .75rem; color: var(--dim); margin-bottom: 1.5rem; }
+  #gameCanvas {
+    border: 1px solid var(--green);
+    display: block; margin: 0 auto;
+    image-rendering: pixelated;
+    box-shadow: 0 0 20px #00ff4133;
+    max-width: 100%;
+  }
+  .game-controls {
+    display: flex; gap: 1rem; justify-content: center;
+    margin-top: 1rem; flex-wrap: wrap;
+  }
+  .game-ctrl-btn {
+    font-family: 'Press Start 2P', monospace;
+    font-size: .4rem; padding: .5rem 1rem;
+    border: 1px solid var(--green); color: var(--green);
+    background: transparent; cursor: none;
+    transition: all .2s;
+  }
+  .game-ctrl-btn:hover { background: var(--green); color: var(--bg); box-shadow: var(--glow-green); }
+  #game-score-display {
+    font-family: 'Press Start 2P', monospace;
+    font-size: .55rem; color: var(--yellow);
+    margin-top: .8rem; text-shadow: var(--glow-yellow);
+  }
+
+  /* ── PROGRESS BAR (scroll) ── */
+  #scroll-progress {
+    position: fixed; top: 0; left: 0; height: 2px;
+    background: linear-gradient(90deg, var(--green), var(--cyan), var(--pink));
+    z-index: 10000; transition: width .1s;
+    box-shadow: var(--glow-green);
+  }
+
+  /* ── GLITCH TEXT UTILITY ── */
+  .glitch {
+    position: relative; display: inline-block;
+  }
+  .glitch::before, .glitch::after {
+    content: attr(data-text);
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+  }
+  .glitch::before {
+    color: var(--pink); animation: glitch1 4s infinite;
+    clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+  }
+  .glitch::after {
+    color: var(--cyan); animation: glitch2 4s infinite;
+    clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+  }
+  @keyframes glitch1 {
+    0%,90%,100%{transform:none;opacity:0}
+    91%{transform:translateX(-2px);opacity:1}
+    93%{transform:translateX(2px);opacity:1}
+    95%{transform:none;opacity:0}
+  }
+  @keyframes glitch2 {
+    0%,90%,100%{transform:none;opacity:0}
+    92%{transform:translateX(2px);opacity:1}
+    94%{transform:translateX(-2px);opacity:1}
+    96%{transform:none;opacity:0}
+  }
+
+  /* Reveal animations */
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity .6s ease, transform .6s ease; }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  @media (max-width: 700px) {
+    .hero-name { font-size: 2rem; }
+    .about-grid { grid-template-columns: 1fr 1fr; }
+    nav .nav-links { display: none; }
+  }
+</style>
+</head>
 <body>
-<!--header design-->
-<header class="header">
-    <a href="#" class="logo">Kavish.</a>
-    <div class="bx bx-menu" id="menu-icon"></div>
-    <nav class="navbar">
-        <a href="#home" class="active">Home</a>
-        <a href="#about">About</a>
-        <a href="#education">Education</a>
-        <a href="#skills">Skills</a>
-        <a href="#contact">Contact</a>
-    </nav>
-</header>
-<!-- home selection design-->
-<section class="home" id="home">
-    <div class="home-content">
-        <h1>Hi, I'm <span>Kavish Palan</span></h1>
-        <div class="text-animate">
-            <h3>Frontend Developer</h3>
-        </div>
-        <p>I'm an Honors Computer Science student with a passion for cybersecurity and cloud technologies. I thrive on solving complex problems, learning new technologies, and building secure, efficient systems. My experiences in academics, leadership, and hands-on roles have equipped me with strong technical skills and the adaptability to excel in dynamic environments. I'm driven to contribute to the cybersecurity field and create innovative solutions that make a difference.</p>
-        <div class="btn-box">
-            <a href="" class="btn"></a>
-            <a href="" class="btn"></a>
-        </div>
+
+<!-- Scroll Progress Bar -->
+<div id="scroll-progress"></div>
+
+<!-- Custom Cursor -->
+<div id="cursor"></div>
+<div id="cursor-trail"></div>
+
+<!-- Particles Canvas -->
+<canvas id="particles"></canvas>
+
+<!-- ══════════════════ NAVBAR ══════════════════ -->
+<nav>
+  <div class="nav-logo">KAVISH<span>.EXE</span></div>
+  <ul class="nav-links">
+    <li><a href="#about">ABOUT</a></li>
+    <li><a href="#skills">SKILLS</a></li>
+    <li><a href="#projects">PROJECTS</a></li>
+
+    <li><a href="#game-section">PLAY</a></li>
+    <li><a href="#contact">CONTACT</a></li>
+  </ul>
+  <div class="nav-status">
+    <div class="blink-dot"></div>
+    <span>ONLINE</span>
+  </div>
+</nav>
+
+<!-- ══════════════════ HERO ══════════════════ -->
+<section id="hero">
+  <div class="hero-grid"></div>
+
+  <!-- Pixel Art Avatar -->
+  <div class="hero-sprite-area">
+    <svg class="pixel-avatar pixel-char" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+      <!-- Head -->
+      <rect x="5" y="1" width="6" height="5" fill="#c8a876"/>
+      <!-- Eyes -->
+      <rect x="6" y="2" width="1" height="1" fill="#00ff41"/>
+      <rect x="9" y="2" width="1" height="1" fill="#00ff41"/>
+      <!-- Hair -->
+      <rect x="5" y="1" width="6" height="1" fill="#2a1800"/>
+      <rect x="4" y="2" width="1" height="2" fill="#2a1800"/>
+      <!-- Body - hoodie -->
+      <rect x="4" y="6" width="8" height="5" fill="#0a3a1a"/>
+      <rect x="6" y="6" width="4" height="1" fill="#00ff41"/>
+      <!-- Arms -->
+      <rect x="2" y="6" width="2" height="4" fill="#0a3a1a"/>
+      <rect x="12" y="6" width="2" height="4" fill="#0a3a1a"/>
+      <!-- Hands -->
+      <rect x="2" y="10" width="2" height="1" fill="#c8a876"/>
+      <rect x="12" y="10" width="2" height="1" fill="#c8a876"/>
+      <!-- Legs -->
+      <rect x="5" y="11" width="2" height="4" fill="#1a1a4a"/>
+      <rect x="9" y="11" width="2" height="4" fill="#1a1a4a"/>
+      <!-- Shoes -->
+      <rect x="4" y="14" width="3" height="1" fill="#333"/>
+      <rect x="9" y="14" width="3" height="1" fill="#333"/>
+      <!-- Laptop glow -->
+      <rect x="3" y="8" width="2" height="1" fill="#00f5ff" opacity="0.7"/>
+    </svg>
+  </div>
+
+  <div class="hero-text">
+    <div class="hero-tag">// PLAYER ONE HAS ENTERED THE GAME</div>
+    <h1 class="hero-name glitch" data-text="KAVISH PALAN">KAVISH PALAN</h1>
+    <div class="hero-subtitle">4TH YEAR CS ★ UNIVERSITY OF WINDSOR</div>
+    <div class="hero-typewriter" id="typewriter"></div>
+    <div class="hero-badges">
+      <span class="badge cyber">⚔ CYBER SEC</span>
+      <span class="badge cloud">☁ CLOUD / AWS</span>
+      <span class="badge data">◈ DATA OPS</span>
+      <span class="badge dev">⌨ FULL-STACK</span>
+      <span class="badge it">⚙ IT SUPPORT</span>
     </div>
+    <div class="hero-btns">
+      <a href="#projects" class="btn btn-primary">▶ VIEW PROJECTS</a>
+      <a href="#contact" class="btn btn-secondary">✉ CONTACT ME</a>
+      <a href="https://github.com/k4vish" target="_blank" class="btn btn-secondary">⌥ GITHUB</a>
+    </div>
+  </div>
+
+  <div class="scroll-hint">▼ SCROLL TO CONTINUE ▼</div>
 </section>
-<script src="js/script.js"></script>
+
+<!-- ══════════════════ ABOUT ══════════════════ -->
+<section id="about">
+  <div class="section-header reveal">
+    <span class="section-num">01.</span>
+    <h2 class="section-title">ABOUT_ME.SH</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="terminal-box reveal">
+    <div class="terminal-bar">
+      <div class="t-btn t-close"></div>
+      <div class="t-btn t-min"></div>
+      <div class="t-btn t-max"></div>
+      <span class="t-title">kavish@portfolio:~$ whoami</span>
+    </div>
+    <div class="terminal-body">
+      <div class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">cat about.json</span></div>
+      <div class="t-line"><span class="t-out">{</span></div>
+      <div class="t-line"><span class="t-out">&nbsp;&nbsp;<span class="t-key">"name"</span>: <span class="t-val">"Kavish Palan"</span>,</span></div>
+      <div class="t-line"><span class="t-out">&nbsp;&nbsp;<span class="t-key">"degree"</span>: <span class="t-val">"BSc Computer Science, Applied Software Engineering"</span>,</span></div>
+      <div class="t-line"><span class="t-out">&nbsp;&nbsp;<span class="t-key">"university"</span>: <span class="t-val">"University of Windsor"</span>,</span></div>
+      <div class="t-line"><span class="t-out">&nbsp;&nbsp;<span class="t-key">"status"</span>: <span class="t-val">"4th Year — Actively Seeking Opportunities"</span>,</span></div>
+      <div class="t-line"><span class="t-out">&nbsp;&nbsp;<span class="t-key">"location"</span>: <span class="t-val">"Windsor, ON, Canada"</span>,</span></div>
+      <div class="t-line"><span class="t-out">&nbsp;&nbsp;<span class="t-key">"targets"</span>: [<span class="t-val">"Cybersecurity"</span>, <span class="t-val">"Cloud/AWS"</span>, <span class="t-val">"Data Operations"</span>, <span class="t-val">"IT Support"</span>, <span class="t-val">"General CS"</span>],</span></div>
+      <div class="t-line"><span class="t-out">&nbsp;&nbsp;<span class="t-key">"background"</span>: <span class="t-val">"Grew up in UAE, now in Canada — multicultural, adaptable, driven"</span>,</span></div>
+      <div class="t-line"><span class="t-out">&nbsp;&nbsp;<span class="t-key">"fun_facts"</span>: [<span class="t-val">"Soccer Captain"</span>, <span class="t-val">"Film Director"</span>, <span class="t-val">"Club VP"</span>]</span></div>
+      <div class="t-line"><span class="t-out">}</span></div>
+      <div class="t-line" style="margin-top:.8rem"><span class="t-prompt">$</span> <span class="t-comment"># CS grad bridging software engineering with cyber, cloud & data ops</span></div>
+      <div class="t-line"><span class="t-prompt">$</span> <span class="t-comment"># Certified in Cybersecurity (Udemy) + AWS Foundations</span></div>
+      <div class="t-line"><span class="t-prompt">$</span> <span class="t-comment"># Built full-stack apps, automation tools, REST APIs & data pipelines</span></div>
+      <div class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">echo "Ready to ship."</span></div>
+      <div class="t-line"><span class="t-out">Ready to ship.</span></div>
+      <div class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">█</span></div>
+    </div>
+  </div>
+
+  <div class="about-grid reveal" style="margin-top:2rem">
+    <div class="stat-box">
+      <div class="stat-num" data-target="4">0</div>
+      <div class="stat-label">YEARS OF STUDY</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" data-target="6">0</div>
+      <div class="stat-label">PROJECTS SHIPPED</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" data-target="2">0</div>
+      <div class="stat-label">CERTIFICATIONS</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" data-target="5">0</div>
+      <div class="stat-label">TARGET DOMAINS</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ SKILLS ══════════════════ -->
+<section id="skills">
+  <div class="section-header reveal">
+    <span class="section-num">02.</span>
+    <h2 class="section-title">SKILL_TREE.JSON</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="skills-grid">
+    <div class="skill-category cat-cyber reveal">
+      <div class="skill-cat-title">⚔ CYBERSECURITY</div>
+      <div class="skill-tags">
+        <span class="skill-tag">Security Fundamentals</span>
+        <span class="skill-tag">Networking (TCP/IP)</span>
+        <span class="skill-tag">VPNs & Firewalls</span>
+        <span class="skill-tag">IAM</span>
+        <span class="skill-tag">Security Groups</span>
+        <span class="skill-tag">JWT / OAuth</span>
+        <span class="skill-tag">Subnets & DNS</span>
+        <span class="skill-tag">DHCP</span>
+        <span class="skill-tag">Udemy Certified</span>
+      </div>
+    </div>
+    <div class="skill-category cat-cloud reveal">
+      <div class="skill-cat-title">☁ CLOUD & DEVOPS</div>
+      <div class="skill-tags">
+        <span class="skill-tag">AWS (Foundations)</span>
+        <span class="skill-tag">Azure</span>
+        <span class="skill-tag">Terraform</span>
+        <span class="skill-tag">CloudFormation</span>
+        <span class="skill-tag">GitHub Actions</span>
+        <span class="skill-tag">Jenkins</span>
+        <span class="skill-tag">GitLab CI</span>
+        <span class="skill-tag">CloudWatch</span>
+        <span class="skill-tag">Prometheus</span>
+        <span class="skill-tag">Grafana</span>
+      </div>
+    </div>
+    <div class="skill-category cat-data reveal">
+      <div class="skill-cat-title">◈ DATA & REPORTING</div>
+      <div class="skill-tags">
+        <span class="skill-tag">SQL (Joins/CTEs/Agg)</span>
+        <span class="skill-tag">PostgreSQL</span>
+        <span class="skill-tag">SQLite</span>
+        <span class="skill-tag">Power BI</span>
+        <span class="skill-tag">Excel / Pivot Tables</span>
+        <span class="skill-tag">Data Quality Checks</span>
+        <span class="skill-tag">Python Automation</span>
+        <span class="skill-tag">Structured Outputs</span>
+      </div>
+    </div>
+    <div class="skill-category cat-dev reveal">
+      <div class="skill-cat-title">⌨ DEVELOPMENT</div>
+      <div class="skill-tags">
+        <span class="skill-tag">Python</span>
+        <span class="skill-tag">JavaScript</span>
+        <span class="skill-tag">Java</span>
+        <span class="skill-tag">C / C++</span>
+        <span class="skill-tag">React</span>
+        <span class="skill-tag">Node.js</span>
+        <span class="skill-tag">Express</span>
+        <span class="skill-tag">FastAPI</span>
+        <span class="skill-tag">REST APIs</span>
+        <span class="skill-tag">HTML / CSS</span>
+      </div>
+    </div>
+    <div class="skill-category cat-it reveal">
+      <div class="skill-cat-title">⚙ IT & SYSTEMS</div>
+      <div class="skill-tags">
+        <span class="skill-tag">Linux Admin</span>
+        <span class="skill-tag">Bash Scripting</span>
+        <span class="skill-tag">OS Fundamentals</span>
+        <span class="skill-tag">Hardware/Software Support</span>
+        <span class="skill-tag">Ticket Systems (Jira/ServiceNow)</span>
+        <span class="skill-tag">Runbooks & Documentation</span>
+        <span class="skill-tag">Connectivity Troubleshooting</span>
+      </div>
+    </div>
+    <div class="skill-category cat-tools reveal">
+      <div class="skill-cat-title">🛠 TOOLS & PRACTICES</div>
+      <div class="skill-tags">
+        <span class="skill-tag">Git / GitHub</span>
+        <span class="skill-tag">pytest</span>
+        <span class="skill-tag">Docker (basics)</span>
+        <span class="skill-tag">MS Office 365</span>
+        <span class="skill-tag">Eclipse</span>
+        <span class="skill-tag">Blender</span>
+        <span class="skill-tag">SDLC</span>
+        <span class="skill-tag">Agile / Scrum</span>
+        <span class="skill-tag">Technical Writing</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Proficiency bars -->
+  <div class="skill-bars reveal" style="margin-top:2.5rem">
+    <div style="font-family:'Press Start 2P',monospace;font-size:.45rem;color:var(--dim);margin-bottom:1.5rem;letter-spacing:2px;">// PROFICIENCY LEVELS</div>
+    <div class="skill-bar-row">
+      <div class="skill-bar-label"><span>Python & Scripting</span><span>85%</span></div>
+      <div class="skill-bar-track"><div class="skill-bar-fill" style="width:85%;background:linear-gradient(90deg,var(--green),var(--cyan));box-shadow:0 0 8px #00ff4166"></div></div>
+    </div>
+    <div class="skill-bar-row">
+      <div class="skill-bar-label"><span>SQL & Data Ops</span><span>80%</span></div>
+      <div class="skill-bar-track"><div class="skill-bar-fill" style="width:80%;background:linear-gradient(90deg,var(--yellow),var(--orange));box-shadow:0 0 8px #ffe60066"></div></div>
+    </div>
+    <div class="skill-bar-row">
+      <div class="skill-bar-label"><span>Cloud / AWS</span><span>70%</span></div>
+      <div class="skill-bar-track"><div class="skill-bar-fill" style="width:70%;background:linear-gradient(90deg,var(--cyan),var(--purple));box-shadow:0 0 8px #00f5ff66"></div></div>
+    </div>
+    <div class="skill-bar-row">
+      <div class="skill-bar-label"><span>Cybersecurity</span><span>68%</span></div>
+      <div class="skill-bar-track"><div class="skill-bar-fill" style="width:68%;background:linear-gradient(90deg,var(--pink),var(--purple));box-shadow:0 0 8px #ff006e66"></div></div>
+    </div>
+    <div class="skill-bar-row">
+      <div class="skill-bar-label"><span>Full-Stack (React/Node)</span><span>75%</span></div>
+      <div class="skill-bar-track"><div class="skill-bar-fill" style="width:75%;background:linear-gradient(90deg,var(--green),var(--yellow));box-shadow:0 0 8px #00ff4166"></div></div>
+    </div>
+    <div class="skill-bar-row">
+      <div class="skill-bar-label"><span>Linux & Systems</span><span>72%</span></div>
+      <div class="skill-bar-track"><div class="skill-bar-fill" style="width:72%;background:linear-gradient(90deg,var(--orange),var(--pink));box-shadow:0 0 8px #ff6b0066"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ PROJECTS ══════════════════ -->
+<section id="projects">
+  <div class="section-header reveal">
+    <span class="section-num">03.</span>
+    <h2 class="section-title">PROJECTS.EXE</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="projects-grid">
+
+    <!-- Job Sniper -->
+    <div class="project-card reveal">
+      <div class="project-card-header">
+        <div class="project-window-btns"><span class="pw-r"></span><span class="pw-y"></span><span class="pw-g"></span></div>
+        <span class="project-type-tag" style="color:var(--cyan);border-color:var(--cyan)">AI / FULL-STACK</span>
+      </div>
+      <div class="project-body">
+        <div class="project-title">JOB SNIPER</div>
+        <div class="project-subtitle">AI-Powered Resume & Job Matching Tool</div>
+        <div class="project-desc">Full-stack application that automates the job hunt — generates tailored resumes, compares them against JDs using AI, outputs fit scores with missing keyword gaps, and structures everything via consistent JSON contracts.</div>
+        <ul class="project-features">
+          <li>Gemini API integration for structured AI outputs</li>
+          <li>Express/Node.js backend with REST endpoints for build/tailor/match workflows</li>
+          <li>Consistent JSON response contracts across all endpoints</li>
+          <li>Robust error handling & env variable config</li>
+        </ul>
+        <div class="project-stack">
+          <span class="stack-tag" style="color:var(--cyan);border-color:var(--cyan)">React</span>
+          <span class="stack-tag" style="color:var(--green);border-color:var(--green)">Node.js</span>
+          <span class="stack-tag" style="color:var(--green);border-color:var(--green)">Express</span>
+          <span class="stack-tag" style="color:var(--yellow);border-color:var(--yellow)">Gemini API</span>
+          <span class="stack-tag" style="color:var(--pink);border-color:var(--pink)">CSS</span>
+        </div>
+        <div class="project-links">
+          <a href="https://github.com/k4vish" target="_blank" class="proj-link">⌥ GITHUB</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- SprintLite -->
+    <div class="project-card reveal">
+      <div class="project-card-header">
+        <div class="project-window-btns"><span class="pw-r"></span><span class="pw-y"></span><span class="pw-g"></span></div>
+        <span class="project-type-tag" style="color:var(--green);border-color:var(--green)">BACKEND / API</span>
+      </div>
+      <div class="project-body">
+        <div class="project-title">SPRINTLITE</div>
+        <div class="project-subtitle">Mini Issue Tracker REST API</div>
+        <div class="project-desc">Lightweight issue tracking API designed for reliability — relational SQLite schema, FastAPI endpoints with input validation, full pytest coverage for edge cases, and consistent error responses for clean downstream usage.</div>
+        <ul class="project-features">
+          <li>Relational schema design in SQLite with CRUD endpoints</li>
+          <li>Input validation & structured error responses</li>
+          <li>Automated pytest suite covering core flows & edge cases</li>
+          <li>API documented for downstream integration</li>
+        </ul>
+        <div class="project-stack">
+          <span class="stack-tag" style="color:var(--yellow);border-color:var(--yellow)">Python</span>
+          <span class="stack-tag" style="color:var(--cyan);border-color:var(--cyan)">FastAPI</span>
+          <span class="stack-tag" style="color:var(--green);border-color:var(--green)">SQLite</span>
+          <span class="stack-tag" style="color:var(--pink);border-color:var(--pink)">pytest</span>
+        </div>
+        <div class="project-links">
+          <a href="https://github.com/k4vish" target="_blank" class="proj-link">⌥ GITHUB</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- News Headlines Tool -->
+    <div class="project-card reveal">
+      <div class="project-card-header">
+        <div class="project-window-btns"><span class="pw-r"></span><span class="pw-y"></span><span class="pw-g"></span></div>
+        <span class="project-type-tag" style="color:var(--yellow);border-color:var(--yellow)">AUTOMATION / DATA</span>
+      </div>
+      <div class="project-body">
+        <div class="project-title">HEADLINES BOT</div>
+        <div class="project-subtitle">News Ingestion & Automation Pipeline</div>
+        <div class="project-desc">Python automation script that fetches, parses, and normalizes news headlines from HTML sources into consistent structured outputs — built for repeatability with logging, error handling, and full runbook documentation.</div>
+        <ul class="project-features">
+          <li>HTML ingestion & parsing with graceful fallbacks</li>
+          <li>Structured output normalization for downstream tracking</li>
+          <li>Full logging & error capture for fast debugging</li>
+          <li>Documented runbook for reproducibility & handoff</li>
+        </ul>
+        <div class="project-stack">
+          <span class="stack-tag" style="color:var(--yellow);border-color:var(--yellow)">Python</span>
+          <span class="stack-tag" style="color:var(--orange);border-color:var(--orange)">HTML Parsing</span>
+          <span class="stack-tag" style="color:var(--green);border-color:var(--green)">Logging</span>
+        </div>
+        <div class="project-links">
+          <a href="https://github.com/k4vish" target="_blank" class="proj-link">⌥ GITHUB</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Customer Order Data Analysis -->
+    <div class="project-card reveal">
+      <div class="project-card-header">
+        <div class="project-window-btns"><span class="pw-r"></span><span class="pw-y"></span><span class="pw-g"></span></div>
+        <span class="project-type-tag" style="color:var(--yellow);border-color:var(--yellow)">DATA ANALYSIS</span>
+      </div>
+      <div class="project-body">
+        <div class="project-title">ORDER INTEL</div>
+        <div class="project-subtitle">Customer & Order Data Analysis</div>
+        <div class="project-desc">End-to-end SQL analysis of relational customer/order datasets — joins, filters, aggregations, and KPI-style summaries — validated with data quality checks and delivered as clean Excel dashboards.</div>
+        <ul class="project-features">
+          <li>Complex SQL queries: joins, CTEs, aggregations</li>
+          <li>Data quality: row-count reconciliation, duplicates, nulls</li>
+          <li>KPI summaries and Excel pivot-style reporting</li>
+          <li>Power BI dashboard visuals with slicers</li>
+        </ul>
+        <div class="project-stack">
+          <span class="stack-tag" style="color:var(--cyan);border-color:var(--cyan)">SQL</span>
+          <span class="stack-tag" style="color:var(--green);border-color:var(--green)">Excel</span>
+          <span class="stack-tag" style="color:var(--yellow);border-color:var(--yellow)">Power BI</span>
+        </div>
+        <div class="project-links">
+          <a href="https://github.com/k4vish" target="_blank" class="proj-link">⌥ GITHUB</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kyoryu Study Tool -->
+    <div class="project-card reveal">
+      <div class="project-card-header">
+        <div class="project-window-btns"><span class="pw-r"></span><span class="pw-y"></span><span class="pw-g"></span></div>
+        <span class="project-type-tag" style="color:var(--purple);border-color:var(--purple)">WEB APP / GAME</span>
+      </div>
+      <div class="project-body">
+        <div class="project-title">KYORYU</div>
+        <div class="project-subtitle">Gamified Study Web App</div>
+        <div class="project-desc">Browser-based study tool with multiple utilities and a gamified points system — study to level up your virtual pet. Persistent JSON state, predictable core flows, and a polished UI/UX with thorough bug testing.</div>
+        <ul class="project-features">
+          <li>Gamified points system with virtual pet progression</li>
+          <li>Persistent state via JSON across sessions</li>
+          <li>Multiple study utilities in one interface</li>
+          <li>Full bug testing cycle with documented fix notes</li>
+        </ul>
+        <div class="project-stack">
+          <span class="stack-tag" style="color:var(--orange);border-color:var(--orange)">HTML</span>
+          <span class="stack-tag" style="color:var(--cyan);border-color:var(--cyan)">CSS</span>
+          <span class="stack-tag" style="color:var(--yellow);border-color:var(--yellow)">JavaScript</span>
+          <span class="stack-tag" style="color:var(--green);border-color:var(--green)">JSON</span>
+        </div>
+        <div class="project-links">
+          <a href="https://github.com/k4vish" target="_blank" class="proj-link">⌥ GITHUB</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- VroomVroom3D -->
+    <div class="project-card reveal">
+      <div class="project-card-header">
+        <div class="project-window-btns"><span class="pw-r"></span><span class="pw-y"></span><span class="pw-g"></span></div>
+        <span class="project-type-tag" style="color:var(--pink);border-color:var(--pink)">3D / SIMULATION</span>
+      </div>
+      <div class="project-body">
+        <div class="project-title">VROOMVROOM3D</div>
+        <div class="project-subtitle">3D Driving Simulation — Java3D</div>
+        <div class="project-desc">Full 3D driving simulation built with Java3D and Blender — scene-graph rendering pipeline, Blender mesh imports, keyboard/mouse event-driven controls with ray-picking, and collision detection with environment objects.</div>
+        <ul class="project-features">
+          <li>Java3D scene-graph with imported Blender meshes</li>
+          <li>Arrow-key movement + mouse click ray-picking</li>
+          <li>Collision detection and response logic</li>
+          <li>Build-test-debug iteration for stability</li>
+        </ul>
+        <div class="project-stack">
+          <span class="stack-tag" style="color:var(--pink);border-color:var(--pink)">Java</span>
+          <span class="stack-tag" style="color:var(--orange);border-color:var(--orange)">Java3D</span>
+          <span class="stack-tag" style="color:var(--cyan);border-color:var(--cyan)">Blender</span>
+          <span class="stack-tag" style="color:var(--green);border-color:var(--green)">Eclipse</span>
+        </div>
+        <div class="project-links">
+          <a href="https://github.com/k4vish" target="_blank" class="proj-link">⌥ GITHUB</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════ CERTIFICATIONS ══════════════════ -->
+<section id="certs">
+  <div class="section-header reveal">
+    <span class="section-num">04.</span>
+    <h2 class="section-title">ACHIEVEMENTS.DAT</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="certs-grid">
+    <div class="cert-card reveal">
+      <div class="cert-icon">🔐</div>
+      <div class="cert-name">Cybersecurity: Beginner to Expert</div>
+      <div class="cert-org">Udemy</div>
+      <div class="cert-badge-text">✓ CERTIFIED</div>
+    </div>
+    <div class="cert-card reveal">
+      <div class="cert-icon">☁</div>
+      <div class="cert-name">AWS Cloud Foundations</div>
+      <div class="cert-org">Amazon Web Services</div>
+      <div class="cert-badge-text">✓ COMPLETED</div>
+    </div>
+    <div class="cert-card reveal">
+      <div class="cert-icon">🎓</div>
+      <div class="cert-name">BSc Computer Science</div>
+      <div class="cert-org">University of Windsor — In Progress</div>
+      <div class="cert-badge-text">◌ 2025 GRAD</div>
+    </div>
+    <div class="cert-card reveal">
+      <div class="cert-icon">🎬</div>
+      <div class="cert-name">Sharjah Film Festival</div>
+      <div class="cert-org">Short Film Submission — Director</div>
+      <div class="cert-badge-text">✓ SUBMITTED</div>
+    </div>
+  </div>
+
+  <!-- Leadership -->
+  <div style="margin-top:3rem">
+    <div style="font-family:'Press Start 2P',monospace;font-size:.5rem;color:var(--purple);text-shadow:0 0 10px var(--purple);margin-bottom:1.5rem;letter-spacing:2px;">// LEADERSHIP & EXTRACURRICULAR</div>
+    <div class="leadership-grid">
+      <div class="leader-card reveal">
+        <div class="leader-icon">🌍</div>
+        <div class="leader-role">Vice President</div>
+        <div class="leader-org">Multi-Culture Club — UWindsor (2025–Present)</div>
+        <div class="leader-desc">Runs club operations, coordinates events with campus, owns agendas, follow-ups, and task completion before event day.</div>
+      </div>
+      <div class="leader-card reveal">
+        <div class="leader-icon">⚽</div>
+        <div class="leader-role">Team Captain</div>
+        <div class="leader-org">Soccer — Our Own English High School, UAE</div>
+        <div class="leader-desc">Led team coordination and communication under pressure, reinforcing reliability and teamwork across the squad.</div>
+      </div>
+      <div class="leader-card reveal">
+        <div class="leader-icon">🏛</div>
+        <div class="leader-role">Student Council Member</div>
+        <div class="leader-org">Our Own English High School, UAE</div>
+        <div class="leader-desc">Organized events and supported student-led initiatives, representing student interests to the administration.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ MINI ARCADE GAME ══════════════════ -->
+<div id="game-section">
+  <div class="section-header reveal">
+    <span class="section-num">05.</span>
+    <h2 class="section-title" style="font-size:1.2rem">BONUS_STAGE.EXE</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="game-wrapper reveal">
+    <div class="game-title">★ KAVISH'S BUG ZAPPER ★</div>
+    <div class="game-sub">Shoot the bugs before they crash the prod server! Use ← → to move, SPACE to shoot.</div>
+    <canvas id="gameCanvas" width="500" height="300"></canvas>
+    <div id="game-score-display">SCORE: 0 &nbsp;|&nbsp; LIVES: ♥♥♥ &nbsp;|&nbsp; WAVE: 1</div>
+    <div class="game-controls">
+      <button class="game-ctrl-btn" id="startBtn" onclick="startGame()">▶ START GAME</button>
+      <button class="game-ctrl-btn" onclick="resetGame()">↺ RESET</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ CONTACT ══════════════════ -->
+<section id="contact">
+  <div class="section-header reveal">
+    <span class="section-num">06.</span>
+    <h2 class="section-title">CONTACT.SSH</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="contact-inner">
+    <div class="contact-tagline reveal">
+      // OPEN TO OPPORTUNITIES IN CYBER, CLOUD, DATA & IT<br>
+      // LET'S BUILD SOMETHING RELIABLE TOGETHER
+    </div>
+    <div class="contact-grid reveal">
+      <a href="mailto:k4vishh@gmail.com" class="contact-card">
+        <div class="contact-card-icon">✉</div>
+        <div class="contact-card-label">PERSONAL EMAIL</div>
+        <div class="contact-card-val">k4vishh@gmail.com</div>
+      </a>
+      <a href="mailto:palan@uwindsor.ca" class="contact-card">
+        <div class="contact-card-icon">🎓</div>
+        <div class="contact-card-label">UNI EMAIL</div>
+        <div class="contact-card-val">palan@uwindsor.ca</div>
+      </a>
+      <a href="https://linkedin.com/in/kavish-palan" target="_blank" class="contact-card">
+        <div class="contact-card-icon">in</div>
+        <div class="contact-card-label">LINKEDIN</div>
+        <div class="contact-card-val">kavish-palan</div>
+      </a>
+      <a href="https://github.com/k4vish" target="_blank" class="contact-card">
+        <div class="contact-card-icon">⌥</div>
+        <div class="contact-card-label">GITHUB</div>
+        <div class="contact-card-val">github.com/k4vish</div>
+      </a>
+      <a href="tel:+16473948344" class="contact-card">
+        <div class="contact-card-icon">📞</div>
+        <div class="contact-card-label">PHONE</div>
+        <div class="contact-card-val">+1 647-394-8344</div>
+      </a>
+      <a href="#" class="contact-card" style="pointer-events:none;opacity:.5">
+        <div class="contact-card-icon">📍</div>
+        <div class="contact-card-label">LOCATION</div>
+        <div class="contact-card-val">Windsor, ON, Canada</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ FOOTER ══════════════════ -->
+<footer>
+  <span>KAVISH PALAN</span> · PORTFOLIO v4.0 · BUILT WITH ♥ & TOO MUCH CAFFEINE<br>
+  <span style="color:var(--dim);margin-top:.4rem;display:block">© 2025 · ALL RIGHTS RESERVED · PRESS START TO PLAY AGAIN</span>
+</footer>
+
+<script>
+// ── CURSOR ──
+const cursor = document.getElementById('cursor');
+const trail  = document.getElementById('cursor-trail');
+let mx=0,my=0,tx=0,ty=0;
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.left = mx+'px'; cursor.style.top = my+'px';
+});
+function animTrail() {
+  tx += (mx-tx)*.15; ty += (my-ty)*.15;
+  trail.style.left = tx+'px'; trail.style.top = ty+'px';
+  requestAnimationFrame(animTrail);
+}
+animTrail();
+
+// ── SCROLL PROGRESS ──
+window.addEventListener('scroll', () => {
+  const pct = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+  document.getElementById('scroll-progress').style.width = pct + '%';
+});
+
+// ── TYPEWRITER ──
+const phrases = [
+  "CS Senior targeting Cyber, Cloud & Data...",
+  "Building reliable systems & automation...",
+  "AWS Certified | Cybersecurity Trained...",
+  "Turning data into decisions...",
+  "Shipping clean, documented code..."
+];
+let pi=0,ci=0,del=false;
+const tw = document.getElementById('typewriter');
+function type() {
+  const phrase = phrases[pi];
+  if (!del) {
+    tw.textContent = phrase.slice(0,++ci);
+    if (ci===phrase.length) { del=true; setTimeout(type,1800); return; }
+  } else {
+    tw.textContent = phrase.slice(0,--ci);
+    if (ci===0) { del=false; pi=(pi+1)%phrases.length; }
+  }
+  setTimeout(type, del?40:70);
+}
+type();
+
+// ── REVEAL ON SCROLL ──
+const revealEls = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach((e,i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i*80);
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+revealEls.forEach(el => observer.observe(el));
+
+// ── COUNTER ANIMATION ──
+function animCounter(el, target) {
+  let cur = 0;
+  const step = Math.ceil(target/30);
+  const t = setInterval(() => {
+    cur = Math.min(cur+step, target);
+    el.textContent = cur;
+    if (cur>=target) clearInterval(t);
+  }, 50);
+}
+const counterObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const nums = e.target.querySelectorAll('[data-target]');
+      nums.forEach(n => animCounter(n, parseInt(n.dataset.target)));
+      counterObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('.about-grid').forEach(g => counterObs.observe(g));
+
+// ── PARTICLES ──
+const pcanvas = document.getElementById('particles');
+const pctx = pcanvas.getContext('2d');
+pcanvas.width = window.innerWidth; pcanvas.height = window.innerHeight;
+window.addEventListener('resize', () => { pcanvas.width=window.innerWidth; pcanvas.height=window.innerHeight; });
+const particles = Array.from({length:60},()=>({
+  x: Math.random()*window.innerWidth,
+  y: Math.random()*window.innerHeight,
+  vx: (Math.random()-.5)*.3,
+  vy: (Math.random()-.5)*.3,
+  size: Math.random()*2+1,
+  alpha: Math.random()*.4+.1,
+  color: ['#00ff41','#00f5ff','#ffe600','#ff006e'][Math.floor(Math.random()*4)]
+}));
+function drawParticles() {
+  pctx.clearRect(0,0,pcanvas.width,pcanvas.height);
+  particles.forEach(p => {
+    p.x+=p.vx; p.y+=p.vy;
+    if(p.x<0||p.x>pcanvas.width) p.vx*=-1;
+    if(p.y<0||p.y>pcanvas.height) p.vy*=-1;
+    pctx.beginPath();
+    pctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+    pctx.fillStyle = p.color + Math.floor(p.alpha*255).toString(16).padStart(2,'0');
+    pctx.fill();
+    pctx.shadowBlur = 6; pctx.shadowColor = p.color;
+  });
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+// ── ARCADE GAME: BUG ZAPPER ──
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+ctx.imageSmoothingEnabled = false;
+
+let gameState = 'idle';
+let score=0, lives=3, wave=1;
+let player = {x:230,y:270,w:30,h:18,speed:4};
+let bullets = [];
+let bugs = [];
+let particles2 = [];
+let keys = {};
+let gameLoop;
+
+document.addEventListener('keydown', e => {
+  keys[e.key] = true;
+  if(e.key===' ' && gameState==='playing') { e.preventDefault(); shoot(); }
+});
+document.addEventListener('keyup', e => keys[e.key] = false);
+
+function spawnWave() {
+  bugs = [];
+  const rows = Math.min(2+wave, 4);
+  const cols = Math.min(5+wave, 10);
+  for(let r=0;r<rows;r++) {
+    for(let c=0;c<Math.min(cols,8);c++) {
+      bugs.push({
+        x: 30+c*55, y: 20+r*32,
+        w:22, h:16,
+        vx: 0.6+wave*0.15,
+        vy: 0, dir:1,
+        type: r%3,
+        alive:true
+      });
+    }
+  }
+}
+
+function shoot() {
+  if(bullets.length < 4) {
+    bullets.push({x:player.x+13, y:player.y, speed:7, alive:true});
+  }
+}
+
+const bugColors = ['#ff006e','#ffe600','#bf00ff'];
+const bugSymbols = ['🐛','🦠','🦟'];
+
+function drawPixelBug(x,y,type,t) {
+  const c = bugColors[type];
+  ctx.fillStyle = c;
+  ctx.shadowBlur=6; ctx.shadowColor=c;
+  // body
+  ctx.fillRect(x+4,y+4,14,8);
+  // head
+  ctx.fillRect(x+8,y+1,6,5);
+  // legs (animated)
+  const legoff = Math.floor(t/8)%2===0;
+  ctx.fillRect(x,   y+5+( legoff?1:0),4,2);
+  ctx.fillRect(x+18,y+5+(!legoff?1:0),4,2);
+  ctx.fillRect(x+1, y+9+(!legoff?1:0),3,2);
+  ctx.fillRect(x+18,y+9+( legoff?1:0),3,2);
+  // eyes
+  ctx.fillStyle='#fff';
+  ctx.fillRect(x+9,y+2,2,2);
+  ctx.fillRect(x+13,y+2,2,2);
+  ctx.shadowBlur=0;
+}
+
+function drawPlayer(x,y) {
+  ctx.fillStyle='#00ff41';
+  ctx.shadowBlur=10; ctx.shadowColor='#00ff41';
+  // cannon body
+  ctx.fillRect(x+2,y+6,26,10);
+  ctx.fillRect(x+10,y+1,10,8);
+  // tip
+  ctx.fillRect(x+13,y-3,4,6);
+  // engine glow
+  ctx.fillStyle='#00f5ff';
+  ctx.fillRect(x+5,y+12,4,4);
+  ctx.fillRect(x+21,y+12,4,4);
+  ctx.shadowBlur=0;
+}
+
+let bugDir = 1, bugDropTimer = 0;
+let t = 0;
+
+function updateGame() {
+  if(gameState!=='playing') return;
+  t++;
+
+  // move player
+  if(keys['ArrowLeft'] && player.x>0) player.x -= player.speed;
+  if(keys['ArrowRight'] && player.x<canvas.width-player.w) player.x += player.speed;
+
+  // move bullets
+  bullets.forEach(b => { b.y -= b.speed; if(b.y<0) b.alive=false; });
+  bullets = bullets.filter(b=>b.alive);
+
+  // move bugs
+  let hitWall = false;
+  bugs.filter(b=>b.alive).forEach(b => { b.x += b.vx*bugDir; if(b.x>canvas.width-30||b.x<5) hitWall=true; });
+  if(hitWall) {
+    bugDir *= -1;
+    bugs.filter(b=>b.alive).forEach(b => b.y += 10);
+  }
+
+  // bullet-bug collision
+  bullets.forEach(b => {
+    bugs.filter(bg=>bg.alive).forEach(bg => {
+      if(b.x>bg.x && b.x<bg.x+bg.w && b.y>bg.y && b.y<bg.y+bg.h) {
+        b.alive=false; bg.alive=false;
+        score += (wave*10);
+        for(let i=0;i<6;i++) particles2.push({x:bg.x+11,y:bg.y+8,vx:(Math.random()-.5)*4,vy:(Math.random()-.5)*4,life:20,color:bugColors[bg.type]});
+      }
+    });
+  });
+
+  // particles
+  particles2 = particles2.filter(p=>{p.x+=p.vx;p.y+=p.vy;p.life--;return p.life>0;});
+
+  // bugs reach bottom
+  if(bugs.some(b=>b.alive && b.y>canvas.height-40)) {
+    lives--;
+    if(lives<=0) { gameState='gameover'; }
+    else spawnWave();
+  }
+
+  // all bugs dead
+  if(bugs.every(b=>!b.alive)) { wave++; spawnWave(); }
+
+  updateScoreDisplay();
+}
+
+function drawGame() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  // background grid
+  ctx.strokeStyle='#00ff4112';
+  ctx.lineWidth=1;
+  for(let gx=0;gx<canvas.width;gx+=20) {ctx.beginPath();ctx.moveTo(gx,0);ctx.lineTo(gx,canvas.height);ctx.stroke();}
+  for(let gy=0;gy<canvas.height;gy+=20) {ctx.beginPath();ctx.moveTo(0,gy);ctx.lineTo(canvas.width,gy);ctx.stroke();}
+
+  if(gameState==='idle') {
+    ctx.fillStyle='#00ff41'; ctx.font='bold 12px "Press Start 2P"';
+    ctx.textAlign='center'; ctx.shadowBlur=10; ctx.shadowColor='#00ff41';
+    ctx.fillText('BUG ZAPPER', canvas.width/2, 120);
+    ctx.font='7px "Press Start 2P"'; ctx.fillStyle='#00f5ff';
+    ctx.fillText('PRESS START TO PLAY', canvas.width/2, 155);
+    ctx.fillText('← → MOVE   SPACE SHOOT', canvas.width/2, 175);
+    ctx.shadowBlur=0;
+    return;
+  }
+
+  if(gameState==='gameover') {
+    ctx.fillStyle='#ff006e'; ctx.font='bold 12px "Press Start 2P"';
+    ctx.textAlign='center'; ctx.shadowBlur=10; ctx.shadowColor='#ff006e';
+    ctx.fillText('GAME OVER', canvas.width/2, 120);
+    ctx.font='7px "Press Start 2P"'; ctx.fillStyle='#ffe600';
+    ctx.fillText('SCORE: '+score, canvas.width/2, 150);
+    ctx.fillText('PRESS RESET TO RETRY', canvas.width/2, 170);
+    ctx.shadowBlur=0;
+    return;
+  }
+
+  // draw bugs
+  bugs.filter(b=>b.alive).forEach(b => drawPixelBug(b.x,b.y,b.type,t));
+
+  // draw bullets
+  ctx.fillStyle='#00ff41'; ctx.shadowBlur=8; ctx.shadowColor='#00ff41';
+  bullets.forEach(b => { ctx.fillRect(b.x-1,b.y,3,8); });
+  ctx.shadowBlur=0;
+
+  // draw player
+  drawPlayer(player.x, player.y);
+
+  // particles
+  particles2.forEach(p => {
+    ctx.fillStyle=p.color+'cc';
+    ctx.fillRect(p.x,p.y,3,3);
+  });
+
+  // ground line
+  ctx.strokeStyle='#00ff4133'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(0,canvas.height-20); ctx.lineTo(canvas.width,canvas.height-20); ctx.stroke();
+}
+
+function updateScoreDisplay() {
+  const hearts = '♥'.repeat(Math.max(0,lives))+'♡'.repeat(Math.max(0,3-lives));
+  document.getElementById('game-score-display').textContent = `SCORE: ${score}   |   LIVES: ${hearts}   |   WAVE: ${wave}`;
+}
+
+function startGame() {
+  gameState='playing';
+  document.getElementById('startBtn').textContent = '⏸ PLAYING...';
+  updateScoreDisplay();
+}
+function resetGame() {
+  gameState='idle'; score=0; lives=3; wave=1;
+  bullets=[]; particles2=[]; bugDir=1;
+  player.x=230;
+  spawnWave();
+  document.getElementById('startBtn').textContent = '▶ START GAME';
+  updateScoreDisplay();
+}
+
+spawnWave();
+function loop() { updateGame(); drawGame(); requestAnimationFrame(loop); }
+loop();
+</script>
 </body>
 </html>
